@@ -4,12 +4,9 @@ using PaparaAssesment.Repository.Models.User;
 using PaparaAssesment.Service.DTOs.Shared;
 using PaparaAssesment.Service.DTOs.Token;
 using PaparaAssesment.Service.DTOs.Users;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-
-
 namespace PaparaAssesment.API;
 
 public class SignInService (SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, IConfiguration configuration)
