@@ -87,7 +87,7 @@ using (var scope = app.Services.CreateScope())
     }
     if (roleCreateResult is not null && !roleCreateResult.Succeeded)
     {
-        Console.WriteLine($"Admin rolü oluþturulamadý");
+        Console.WriteLine($"Admin role is not created");
     }
     var ResidanceRole = new AppRole
     {
@@ -100,7 +100,7 @@ using (var scope = app.Services.CreateScope())
     }
     if (roleResidanceResult is not null && !roleResidanceResult.Succeeded)
     {
-        Console.WriteLine($"Residance rolü oluþturulamadý");
+        Console.WriteLine($"Residance role is not created");
     }
 
     var usersInAdminRole = await userManager.GetUsersInRoleAsync("Admin");
@@ -117,13 +117,13 @@ using (var scope = app.Services.CreateScope())
 
         if (!result.Succeeded)
         {
-            Console.WriteLine($"Admin rolünde olan kullanýcý oluþturulamadý");
+            Console.WriteLine($"Admin user is not created");
         }
         var roleAssignResult = await userManager.AddToRoleAsync(AdminUser, "Admin");
         if (roleAssignResult.Succeeded)
         {
-            Console.WriteLine($"Admin kullanýcýsý E-maili: {AdminUser.Email}");
-            Console.WriteLine($"Admin kullanýcýsý þifresi: AdminPassword.12");
+            Console.WriteLine($"Admi E-mail: {AdminUser.Email}");
+            Console.WriteLine($"Admin password: AdminPassword.12");
         }
     }
 }
