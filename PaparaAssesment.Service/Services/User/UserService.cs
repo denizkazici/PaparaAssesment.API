@@ -1,15 +1,16 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using PaparaAssesment.Repository.Models.Payments;
 using PaparaAssesment.Repository.Models.User;
 using PaparaAssesment.Service.DTOs.Shared;
 using PaparaAssesment.Service.DTOs.Users;
 using PaparaAssesment.Service.Extensions;
-using System.Collections.Generic;
 
 namespace PaparaAssesment.Service.Services.User;
 
 public class UserService (UserManager<AppUser> userManager,
-        RoleManager<AppRole> roleManager
+        RoleManager<AppRole> roleManager,
+        PaymentHelper helper
     ) : IUserService
 {
     public async Task<ResponseDto<Guid?>> Create(UserAddDtoRequest request)
@@ -27,7 +28,7 @@ public class UserService (UserManager<AppUser> userManager,
         };
         var hasRole = await roleManager.RoleExistsAsync(appRole.Name);
 
-        if (!hasRole) { return ResponseDto<Guid?>.Fail("Rol bulunamadı."); }
+        if (!hasRole) { return ResponseDto<Guid?>.Fail("Role does not found"); }
 
         var result = await userManager.CreateAsync(appUser, request.Password);
 
@@ -58,7 +59,7 @@ public class UserService (UserManager<AppUser> userManager,
         var ValidRole = await roleManager.RoleExistsAsync(appRole.Name);
         if (ValidRole)
         {
-            return ResponseDto<string>.Fail("Oluşturmak İstediğiniz Rol Bulunuyor");
+            return ResponseDto<string>.Fail("Role already exist");
         }
 
         var roleCreateResult = await roleManager.CreateAsync(appRole);
@@ -81,11 +82,11 @@ public class UserService (UserManager<AppUser> userManager,
         
         var hasRole = await roleManager.RoleExistsAsync(appRole.Name);
 
-        if (!hasRole){ return ResponseDto<string>.Fail("Rol bulunamadı.");}
+        if (!hasRole){ return ResponseDto<string>.Fail("Role does not found");}
 
         var hasUser = await userManager.FindByIdAsync(request.UserId);
 
-        if (hasUser is null){ return ResponseDto<string>.Fail("kullanıcı bulunamadı.");}
+        if (hasUser is null){ return ResponseDto<string>.Fail("User does not found");}
 
 
         var roleAssignResult = await userManager.AddToRoleAsync(hasUser, appRole.Name);
@@ -106,7 +107,7 @@ public class UserService (UserManager<AppUser> userManager,
 
         if (hasUser is null)
         {
-            return ResponseDto<string>.Fail("kullanıcı bulunamadı.");
+            return ResponseDto<string>.Fail("User does not found.");
         }
 
         IdentityResult result  = await userManager.DeleteAsync(hasUser);
@@ -119,17 +120,36 @@ public class UserService (UserManager<AppUser> userManager,
         return ResponseDto<string>.Success(string.Empty);
     }
 
-    public async Task<ResponseDto<List<UserDto>>> GetAllUsers()
+    public async Task<ResponseDto<List<UserDto>>> GetReqularPayingUsers()
     {
         var UserList = await userManager.Users.ToListAsync();
-        var UserListWithDto = UserList.ToUserListDto(UserList);
+        List<AppUser> users = new List<AppUser>();
+        foreach (AppUser user in UserList)
+        {
+            if(helper.CalculateRegularPayingUser(user.Id.ToString()))
+            {
+                users.Add(user);
+            }
+        }
+        var UserListWithDto = users.ToUserListDto(UserList);
         //var UserListWithDto = mapper.Map<List<UserDto>>(UserList);
         return ResponseDto<List<UserDto>>.Success(UserListWithDto);
         
     }
 
-    public ResponseDto<int> Update(UserUpdateRequestDto request)
+    public async Task<ResponseDto<string>> Update(UserUpdateRequestDto request)
     {
-        throw new NotImplementedException();
+        var user = await userManager.FindByIdAsync(request.Id);
+        if (user is null) { return ResponseDto<string>.Fail("user not found"); }
+
+        user.TCNo = request.TCNo;
+        user.NameSurname = request.NameSurname;
+        
+        var result = await userManager.UpdateAsync(user);
+
+        if(!result.Succeeded) { return ResponseDto<string>.Fail("user not updated"); }
+
+        return ResponseDto<string>.Success(""); 
+
     }
 }

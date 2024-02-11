@@ -79,9 +79,9 @@ public class UserController(ITokenService tokenService, IUserService userService
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetUsers()
+    public async Task<IActionResult> GetRegularPayingUsers()
     {
-        var response = await userService.GetAllUsers();
+        var response = await userService.GetReqularPayingUsers();
         if (response.AnyError)
         {
             return BadRequest(response);
@@ -95,6 +95,18 @@ public class UserController(ITokenService tokenService, IUserService userService
     public async Task<IActionResult> SignIn(SignInRequestDto request)
     {
         var response = await signInService.SignIn(request);
+        if (response.AnyError)
+        {
+            return BadRequest(response);
+        }
+
+        return Ok(response);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Update(UserUpdateRequestDto request)
+    {
+        var response = await userService.Update(request);
         if (response.AnyError)
         {
             return BadRequest(response);

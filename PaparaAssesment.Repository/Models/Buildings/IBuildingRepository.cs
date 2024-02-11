@@ -5,5 +5,6 @@ namespace PaparaAssesment.Repository.Models.Buildings;
 public interface IBuildingRepository
 {
     Building Add(Building building);
+    Building? GetById(int id);
     
 }

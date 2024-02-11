@@ -13,14 +13,18 @@ public class PaymentHelper (IPaymentRepository paymentRepository, UserManager<Ap
         AppUser hasUser = appUser;
 
         if (hasUser.ApartmentId is null) { return false; }
-        int Year = DateTime.Now.Year;
+        int Year = DateTime.Now.Year - 1;
         //var payments = paymentRepository.GetUserYearlyPaids((int)hasUser.ApartmentId, Year);
-        for (int i = 1; i < 13; i++)
-        {
-            var payments = paymentRepository.GetPaymentsbyMonthYearById(Year, i , (int)hasUser.ApartmentId) ;
-            if (payments is not null || payments.Count() > 0) {  return false; }
-        }
         
+        var payments = paymentRepository.GetUserYearlyUnpaids((int)hasUser.ApartmentId, Year);
+        if (payments is  null || payments!.Count() != 0) {  return false; }
+
+        payments = paymentRepository.GetUserYearlyPaids((int)hasUser.ApartmentId, Year);
+        if (payments is null || payments!.Count() == 0) { return false; }
+
+        payments = paymentRepository.GetUserYearlyAllPayments((int)hasUser.ApartmentId, Year);
+        if (payments is null || payments!.Count() == 0) { return false; }
+
         return true;
     }
 }

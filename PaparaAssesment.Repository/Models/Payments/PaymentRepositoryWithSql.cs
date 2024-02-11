@@ -22,7 +22,7 @@ namespace PaparaAssesment.Repository.Models.Payments
             return _context.Payments.FirstOrDefault(x => x.PaymentId == PaymentId);
         }
         //  Hangi kullanıcınn ne kadar ödemesi olduğunu tek tek görebilir.
-        public List<Payment> GetUserDebtById(int ApartmentId)
+        public List<Payment> GetUserUnpaidPaymentsById(int ApartmentId)
         {
             List<Payment> result =_context.Payments.Include(x => x.Apartment).Where(p=> p.ApartmentId == ApartmentId).Where(p=> p.IsPaid == false).ToList();
             return result;
@@ -48,16 +48,23 @@ namespace PaparaAssesment.Repository.Models.Payments
 
         
 
-        public List<Payment>? GetUserYearlyUnpaids(int apartmentId, int Year , int Month)
+        public List<Payment> GetUserYearlyUnpaids(int apartmentId, int Year )
         {
-            return _context.Payments.Include(x => x.Apartment).ThenInclude(x => x.User).Where(x => x.Year == Year && x.Month == Month && x.ApartmentId == apartmentId && x.IsPaid == false).ToList();
-           
+            return _context.Payments.Include(x => x.Apartment).ThenInclude(x => x.User).Where(x => x.Year == Year  && x.ApartmentId == apartmentId && x.IsPaid == false).ToList();
+        }
+        public List<Payment> GetUserYearlyPaids(int apartmentId, int Year)
+        {
+            return _context.Payments.Include(x => x.Apartment).ThenInclude(x => x.User).Where(x => x.Year == Year  && x.ApartmentId == apartmentId && x.IsPaid == true && x.IsLate == false).ToList();
+        }
+        public List<Payment> GetUserYearlyAllPayments(int apartmentId, int Year)
+        {
+            return _context.Payments.Include(x => x.Apartment).ThenInclude(x => x.User).Where(x => x.Year == Year && x.ApartmentId == apartmentId).ToList();
         }
 
         //user kendisine ait fatura ve aidat görür
-        public List<Payment> GetUserPaymentsById(int ApartmentId)
+        public List<Payment> GetUserPaidPaymentsById(int ApartmentId)
         {
-            List<Payment> result = _context.Payments.Include(x => x.Apartment).Where(p => p.ApartmentId == ApartmentId).ToList();
+            List<Payment> result = _context.Payments.Include(x => x.Apartment).Where(p => p.ApartmentId == ApartmentId).Where(p => p.IsPaid == true).ToList();
             return result;
         }
     }

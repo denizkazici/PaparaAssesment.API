@@ -6,6 +6,7 @@ namespace PaparaAssesment.Service.DTOs.Apartments
 {
     public class ApartmentAddDtoRequest
     {
+        [Required]
         public string Name { get; set; } = default!;
 
         [Required]
@@ -16,6 +17,5 @@ namespace PaparaAssesment.Service.DTOs.Apartments
 
         [Required]
         public int BuildingId { get; set; }
-        //public string UserId { get; set; }
     }
 }

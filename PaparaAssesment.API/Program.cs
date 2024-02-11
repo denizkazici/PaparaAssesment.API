@@ -47,8 +47,6 @@ builder.Services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<AppDbC
 
 builder.Services.AddAuthentication(options =>
 {
-    //schema
-
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, opt =>
@@ -78,7 +76,6 @@ using (var scope = app.Services.CreateScope())
     var appDbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
-    //var SignInmanager = scope.ServiceProvider.GetRequiredService<SignInManager<AppUser>>();
     var appRole = new AppRole
     {
         Name = "Admin"

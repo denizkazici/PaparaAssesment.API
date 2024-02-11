@@ -5,22 +5,19 @@ namespace PaparaAssesment.Repository.Models.Payments;
 public interface IPaymentRepository
 {
     Payment AddPayments(Payment payment);
-
-
     void UpdatePayments(Payment payment);
 
     Payment? GetPayment(int PaymentId);
     List<Payment> GetApartmentsPayments();
 
-    List<Payment> GetUserDebtById(int ApartmentId);
+    List<Payment> GetUserUnpaidPaymentsById(int ApartmentId);
     List<Payment> GetPaymentsbyMonthYearById(int Year, int Month, int apartmentId);
     List<Payment> GetBuildingsPayments(int BuildingId);
 
-    //Decimal Debt(int apartmentId);
+    List<Payment> GetUserPaidPaymentsById(int ApartmentId);
 
-    List<Payment> GetUserPaymentsById(int ApartmentId);
-
-    List<Payment>? GetUserYearlyUnpaids(int apartmentId, int Year, int Month);
-
+    List<Payment> GetUserYearlyUnpaids(int apartmentId, int Year);
+    List<Payment> GetUserYearlyPaids(int apartmentId, int Year);
+    List<Payment> GetUserYearlyAllPayments(int apartmentId, int Year);
 
 }

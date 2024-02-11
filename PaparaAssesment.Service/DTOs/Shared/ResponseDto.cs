@@ -14,10 +14,8 @@ public class ResponseDto<T>
     public List<string>? Errors { get; set; }
 
 
-    public bool AnyError => Errors is not null && Errors.Count > 0; // get
+    public bool AnyError => Errors is not null && Errors.Count > 0; 
 
-
-    // static factory method design pattern
     public static ResponseDto<T> Success(T data)
     {
         return new ResponseDto<T>

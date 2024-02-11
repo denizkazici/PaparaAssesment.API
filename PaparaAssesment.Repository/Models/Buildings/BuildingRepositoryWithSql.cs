@@ -1,4 +1,5 @@
-﻿using PaparaAssesment.Repository.Models.Apartments;
+﻿using Microsoft.EntityFrameworkCore;
+using PaparaAssesment.Repository.Models.Apartments;
 
 namespace PaparaAssesment.Repository.Models.Buildings
 {
@@ -10,6 +11,9 @@ namespace PaparaAssesment.Repository.Models.Buildings
             return building;
         }
 
-       
+        public Building? GetById(int id)
+        {
+            return context.Buildings.FirstOrDefault(x => x.Id == id);
+        }
     }
 }

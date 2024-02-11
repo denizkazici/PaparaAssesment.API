@@ -18,6 +18,7 @@ public class PaymentServiceWithSql (IPaymentRepository paymentRepository, IUnitO
     {
         
         List<Apartment> apartmentList = apartmentRepository.GetApartments(request.BuildingId);
+        if (apartmentList is null || apartmentList.Count == 0) { return ResponseDto<int>.Fail("Building doesn't include any apartment"); }
         decimal apartmentAmount = request.Amount / apartmentList.Count;
         foreach (Apartment apartment in apartmentList)
         {
@@ -40,10 +41,8 @@ public class PaymentServiceWithSql (IPaymentRepository paymentRepository, IUnitO
 
     public ResponseDto<int> AddSubscription(SubscriptionAddRequestDto request)
     {
-        
-       // Apartment apartment = apartmentRepository.GetbyId(request.ApartmentId);
-
-  
+        Apartment? apartment = apartmentRepository.GetbyId(request.ApartmentId);
+        if(apartment is null) { return ResponseDto<int>.Fail("Apartment does not found"); }
         var payment = new Payment
         {
             IsPaid = false,
@@ -55,15 +54,20 @@ public class PaymentServiceWithSql (IPaymentRepository paymentRepository, IUnitO
         };
         paymentRepository.AddPayments(payment);
         unitOfWork.Commit();
-
-        
         return ResponseDto<int>.Success(payment.PaymentId);
     }
 
     public ResponseDto<int> UpdatePayment(PayPaymentRequestDto request)
     {
-        Payment payment = paymentRepository.GetPayment(request.PaymentId);
-        if (payment == null) { return ResponseDto<int>.Fail("Ödeme Bulunamadı");}
+        
+        Payment? payment = paymentRepository.GetPayment(request.PaymentId);
+
+        if (payment == null) { return ResponseDto<int>.Fail("Payment does not found");}
+
+        if (!helper.CalculateRegularPayingUser(request.UserId))
+        {
+            payment.Amount = payment.Amount - (payment.Amount * 0.10m);
+        }
         if ((payment.Month != DateTime.Now.Month) || (payment.Year != DateTime.Now.Year))  
         { 
             payment.Amount = payment.Amount * 1.10m; 
@@ -77,16 +81,13 @@ public class PaymentServiceWithSql (IPaymentRepository paymentRepository, IUnitO
         return ResponseDto<int>.Success(payment.PaymentId);
     }
     //Kullanıcının ödenmemiş fatura ve aidatları döner
-    public async Task<ResponseDto<List<PaymentDto>>> UserDebtById(string userId)
+    public async Task<ResponseDto<List<PaymentDto>>> UserUnpaidPaymentsById(string userId)
     {
         var appUser = await userManager.FindByIdAsync(userId);
-
-        if (appUser is null) { return ResponseDto<List<PaymentDto>>.Fail("kullanıcı bulunamadı."); }
+        if (appUser is null) { return ResponseDto<List<PaymentDto>>.Fail("User does not found"); }
         AppUser hasUser = appUser;
-
-        if (hasUser.ApartmentId is null) { return ResponseDto<List<PaymentDto>>.Fail("Kullanıcı bir daire sakini değil"); }
-
-        List<Payment> PaymentList = paymentRepository.GetUserDebtById((int)hasUser.ApartmentId);
+        if (hasUser.ApartmentId is null) { return ResponseDto<List<PaymentDto>>.Fail("user is not a resident of an apartment"); }
+        List<Payment> PaymentList = paymentRepository.GetUserUnpaidPaymentsById((int)hasUser.ApartmentId);
         List<PaymentDto> PaymentListWithDto = PaymentList.ToPaymentListDto(PaymentList);
         return ResponseDto<List<PaymentDto>>.Success(PaymentListWithDto);
     }
@@ -117,16 +118,16 @@ public class PaymentServiceWithSql (IPaymentRepository paymentRepository, IUnitO
     }
 
     //kullanıcı kendi ödemelerini
-    public ResponseDto<List<PaymentDto>> UserPaymentsById(string userId)
+    public ResponseDto<List<PaymentDto>> UserPaidPaymentsById(string userId)
     {
         var appUser = userManager.Users.First(x=>x.Id.ToString() == userId);
 
-        if (appUser is null) { return ResponseDto<List<PaymentDto>>.Fail("kullanıcı bulunamadı."); }
+        if (appUser is null) { return ResponseDto<List<PaymentDto>>.Fail("User does not found"); }
         AppUser hasUser = appUser;
 
-        if (hasUser.ApartmentId is null) { return ResponseDto<List<PaymentDto>>.Fail("Kullanıcı bir daire sakini değil"); }
+        if (hasUser.ApartmentId is null) { return ResponseDto<List<PaymentDto>>.Fail("user is not a resident of an apartment"); }
 
-        List<Payment> PaymentList = paymentRepository.GetUserPaymentsById((int)hasUser.ApartmentId);
+        List<Payment> PaymentList = paymentRepository.GetUserPaidPaymentsById((int)hasUser.ApartmentId);
         List<PaymentDto> PaymentListWithDto = PaymentList.ToPaymentListDto(PaymentList);
         return ResponseDto<List<PaymentDto>>.Success(PaymentListWithDto);
     }

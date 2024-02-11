@@ -1,12 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PaparaAssesment.Repository.Models.Buildings;
 
 namespace PaparaAssesment.Repository.Models.Apartments;
 
-public class ApartmentRepositoryWithSql(AppDbContext context) : IApartmentRepository
+public class ApartmentRepositoryWithSql(AppDbContext context, IBuildingRepository buildingRepository) : IApartmentRepository
 {
-    public Apartment Add(Apartment apartment)
+    public Apartment? Add(Apartment apartment)
     {
-        var building = context.Buildings.FirstOrDefault(x => x.Id == apartment.BuildingId);
+        var building = buildingRepository.GetById(apartment.BuildingId);
+        if (building is null) { return null; }
+        //var building = context.Buildings.FirstOrDefault(x => x.Id == apartment.BuildingId);
         building.Apartments.Add(apartment);
         context.Apartments.Add(apartment);
         return apartment;

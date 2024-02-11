@@ -10,7 +10,7 @@ public class PaymentDto
     
     public bool IsPaid { get; set; }
     public decimal Amount { get; set; } 
-    public string? PaymentType { get; set; } // credit card or cash
+    public string? PaymentType { get; set; } 
     public PaymentCategory PaymentCategory { get; set; } 
 
     public int Year { get; set; }
@@ -18,5 +18,4 @@ public class PaymentDto
 
     public ApartmentDto Apartment { get; set; }
     
-    //public int buildingId { get; set; }
 }

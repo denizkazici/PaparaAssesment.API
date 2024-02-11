@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using PaparaAssesment.Service.DTOs.Apartments;
 using PaparaAssesment.Service.DTOs.Payments;
-using PaparaAssesment.Service.Services.Apartments;
 using PaparaAssesment.Service.Services.Payments;
 
 namespace PaparaAssesment.API.Controllers
@@ -13,7 +9,7 @@ namespace PaparaAssesment.API.Controllers
     [ApiController]
     public class PaymentController (IPaymentService paymentService): ControllerBase
     {
-        
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult AddSubscription(SubscriptionAddRequestDto request)
         {
@@ -33,11 +29,11 @@ namespace PaparaAssesment.API.Controllers
         {
             return Ok(paymentService.ApartmentsPayments());
         }
-
+        [Authorize(Roles = "Admin, Residance")]
         [HttpGet("{id}")]
-        public IActionResult UserDebtById(string id)
+        public IActionResult UserUnpaidPaymentsById(string id)
         {
-            return Ok(paymentService.UserDebtById(id));
+            return Ok(paymentService.UserUnpaidPaymentsById(id));
         }
 
         [HttpGet("{Year}/{Month}/{apartmentId}")]
@@ -53,11 +49,11 @@ namespace PaparaAssesment.API.Controllers
 
         [Authorize(Roles = "Residance")]
         [HttpGet("{id}")]
-        public IActionResult UserPaymentsById(string id)
+        public IActionResult UserPaidPaymentsById(string id)
         {
-            return Ok(paymentService.UserPaymentsById(id));
+            return Ok(paymentService.UserPaidPaymentsById(id));
         }
-
+        
         [Authorize(Roles = "Residance")]
         [HttpPost]
         public IActionResult PayPayment(PayPaymentRequestDto request)
@@ -65,6 +61,7 @@ namespace PaparaAssesment.API.Controllers
             var result= Ok(paymentService.UpdatePayment(request));
             return Created("", result);
         }
+        
 
     }
 }

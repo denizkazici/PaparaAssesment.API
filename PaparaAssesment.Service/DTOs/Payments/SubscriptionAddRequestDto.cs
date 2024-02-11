@@ -1,14 +1,16 @@
-﻿using PaparaAssesment.Repository.Models.User;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace PaparaAssesment.Service.DTOs.Payments
 {
     public class SubscriptionAddRequestDto
     {
-        public decimal Amount { get; set; } = default!;
+        [Required] public decimal Amount { get; set; } = default!;
         public PaymentCategory PaymentCategory { get; set; }
+        [Required]
         public int Year { get; set; }
+        [Required]
         public int Month { get; set; }
-        //public string UserId { get; set; }
+        [Required]
         public int ApartmentId { get; set; }
         
     }

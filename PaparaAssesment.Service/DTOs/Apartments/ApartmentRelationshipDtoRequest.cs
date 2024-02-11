@@ -1,7 +1,11 @@
-﻿namespace PaparaAssesment.Service.DTOs.Apartments;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace PaparaAssesment.Service.DTOs.Apartments;
 
 public class ApartmentRelationshipDtoRequest
 {
+    [Required] 
     public int ApartmanId { get; set; }
-    public string UserId { get; set; }
+    [Required]
+    public string UserId { get; set; } = default!;
 }
