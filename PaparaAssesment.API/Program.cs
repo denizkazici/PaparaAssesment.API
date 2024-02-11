@@ -89,6 +89,19 @@ using (var scope = app.Services.CreateScope())
     {
         Console.WriteLine($"Admin rolü oluþturulamadý");
     }
+    var ResidanceRole = new AppRole
+    {
+        Name = "Residance"
+    };
+    IdentityResult? roleResidanceResult = null;
+    if (!await roleManager.RoleExistsAsync(ResidanceRole.Name))
+    {
+        roleResidanceResult = await roleManager.CreateAsync(ResidanceRole);
+    }
+    if (roleResidanceResult is not null && !roleResidanceResult.Succeeded)
+    {
+        Console.WriteLine($"Residance rolü oluþturulamadý");
+    }
 
     var usersInAdminRole = await userManager.GetUsersInRoleAsync("Admin");
     if (usersInAdminRole is null || usersInAdminRole.Count == 0)
