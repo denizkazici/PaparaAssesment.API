@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using PaparaAssesment.Service.DTOs.Apartments;
 using PaparaAssesment.Service.Services.Apartments;
 
-//test
 namespace PaparaAssesment.API.Controllers
 {
     [Authorize(Roles = "Admin")]

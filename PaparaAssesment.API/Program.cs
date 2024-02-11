@@ -96,7 +96,7 @@ using (var scope = app.Services.CreateScope())
         var AdminUser = new AppUser
         {
             UserName = "admin",
-            TCNo = "10158092378",
+            TCNo = "10000000000",
             Email = "admin@gmail.com"
 
         };

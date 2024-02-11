@@ -16,6 +16,7 @@ namespace PaparaAssesment.API.Controllers
             var result = paymentService.AddSubscription(request);
             return Created("", result);
         }
+        
         [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult AddBills(BillAddRequestDto request)
@@ -24,11 +25,13 @@ namespace PaparaAssesment.API.Controllers
             return Created("", result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult AllApartmentsPayments()
         {
             return Ok(paymentService.ApartmentsPayments());
         }
+
         [Authorize(Roles = "Admin, Residance")]
         [HttpGet("{id}")]
         public IActionResult UserUnpaidPaymentsById(string id)
@@ -36,11 +39,14 @@ namespace PaparaAssesment.API.Controllers
             return Ok(paymentService.UserUnpaidPaymentsById(id));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("{Year}/{Month}/{apartmentId}")]
         public IActionResult PaymentsbyMonthYearById (int Year, int Month, int apartmentId)
         {
             return Ok(paymentService.PaymentsbyMonthYearById(Year, Month, apartmentId));
         }
+
+        [Authorize(Roles = "Admin")]
         [HttpGet("{buildingId}")]
         public IActionResult BuildingPaymentsById(int buildingId)
         {

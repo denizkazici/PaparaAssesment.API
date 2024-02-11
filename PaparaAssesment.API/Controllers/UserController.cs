@@ -77,7 +77,7 @@ public class UserController(ITokenService tokenService, IUserService userService
 
         return NoContent();
     }
-
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<IActionResult> GetRegularPayingUsers()
     {
@@ -102,7 +102,7 @@ public class UserController(ITokenService tokenService, IUserService userService
 
         return Ok(response);
     }
-
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> Update(UserUpdateRequestDto request)
     {
