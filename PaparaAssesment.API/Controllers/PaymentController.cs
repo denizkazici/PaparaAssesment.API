@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PaparaAssesment.Service.DTOs.Payments;
 using PaparaAssesment.Service.Services.Payments;
-
 namespace PaparaAssesment.API.Controllers
 {
     [Route("api/[controller]/[action]")]
